@@ -62,7 +62,7 @@ export default function Home() {
               </div>
               <div>
                 <h1 className="text-3xl font-bold tracking-tight leading-none">
-                  <span style={{color:"#f59e0b"}}>OneFile</span>
+                  <span style={{color:"#f59e0b"}}>One</span>
                   <span className="text-[#e5e5e5]">Converter</span>
                 </h1>
                 <p className="text-[10px] font-mono text-[#555] mt-0.5 tracking-[2px] uppercase">Design & Developed By : Tipu Sultan</p>
@@ -281,7 +281,7 @@ export default function Home() {
         </div>
 
         <footer className="mt-12 pt-6 border-t border-[#1a1a1a] flex flex-wrap items-center justify-between gap-3">
-          <span className="text-[10px] font-mono text-[#444]">FileForge · 100% in-browser · No server uploads · Your files stay private</span>
+          <span className="text-[10px] font-mono text-[#444]">One-Converter · 100% in-browser · No server uploads · Your files stay private</span>
           <div className="flex items-center gap-1 font-mono text-[10px] text-[#333]">
             <span className="cursor-blink text-[#f59e0b]">▌</span>
             <span>ready</span>
