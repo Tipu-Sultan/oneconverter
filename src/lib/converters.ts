@@ -2,7 +2,16 @@
 //  converters.ts  — all client-side conversion logic
 // ─────────────────────────────────────────────────────────────
 
-export type ConvertTarget = "pdf" | "docx" | "pptx" | "jpg" | "jpeg" | "png" | "webp" | "bmp" | "gif";
+export type ConvertTarget =
+  | "pdf"
+  | "docx"
+  | "pptx"
+  | "jpg"
+  | "jpeg"
+  | "png"
+  | "webp"
+  | "bmp"
+  | "gif";
 
 export interface ConversionResult {
   blob: Blob;
@@ -11,7 +20,9 @@ export interface ConversionResult {
 }
 
 /** Load a File into an HTMLImageElement + get its dataURL */
-export function loadImageFile(file: File): Promise<{ img: HTMLImageElement; dataUrl: string }> {
+export function loadImageFile(
+  file: File,
+): Promise<{ img: HTMLImageElement; dataUrl: string }> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (ev) => {
@@ -30,7 +41,7 @@ export function loadImageFile(file: File): Promise<{ img: HTMLImageElement; data
 export function convertImageFormat(
   img: HTMLImageElement,
   targetFormat: "jpg" | "jpeg" | "png" | "webp" | "bmp" | "gif",
-  quality = 0.92
+  quality = 0.92,
 ): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const canvas = document.createElement("canvas");
@@ -39,7 +50,11 @@ export function convertImageFormat(
     const ctx = canvas.getContext("2d")!;
 
     // White background for formats that don't support transparency
-    if (targetFormat === "jpg" || targetFormat === "jpeg" || targetFormat === "bmp") {
+    if (
+      targetFormat === "jpg" ||
+      targetFormat === "jpeg" ||
+      targetFormat === "bmp"
+    ) {
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
@@ -64,7 +79,7 @@ export function convertImageFormat(
         else reject(new Error("Canvas toBlob failed"));
       },
       mime,
-      quality
+      quality,
     );
   });
 }
@@ -73,7 +88,7 @@ export function convertImageFormat(
 export async function convertToPDF(
   img: HTMLImageElement,
   dataUrl: string,
-  filename: string
+  filename: string,
 ): Promise<Blob> {
   const { jsPDF } = await import("jspdf");
 
@@ -105,7 +120,7 @@ export async function convertToPDF(
 
 /** Merge multiple images into a single PDF — one image per page */
 export async function convertAllToPDFMerged(
-  items: Array<{ img: HTMLImageElement; dataUrl: string; filename: string }>
+  items: Array<{ img: HTMLImageElement; dataUrl: string; filename: string }>,
 ): Promise<Blob> {
   const { jsPDF } = await import("jspdf");
 
@@ -148,9 +163,10 @@ export async function convertAllToPDFMerged(
 /** Convert image to DOCX using docx.js (dynamically imported) */
 export async function convertToDOCX(
   img: HTMLImageElement,
-  dataUrl: string
+  dataUrl: string,
 ): Promise<Blob> {
-  const { Document, Packer, Paragraph, ImageRun, AlignmentType } = await import("docx");
+  const { Document, Packer, Paragraph, ImageRun, AlignmentType } =
+    await import("docx");
 
   // Convert dataUrl to Uint8Array
   const base64 = dataUrl.split(",")[1];
@@ -173,8 +189,10 @@ export async function convertToDOCX(
             children: [
               new ImageRun({
                 data: bytes,
-                transformation: { width: Math.round(widthEmu / 9525), height: Math.round(heightEmu / 9525) },
-                type: "png",
+                transformation: {
+                  width: Math.round(widthEmu / 9525),
+                  height: Math.round(heightEmu / 9525),
+                },
               }),
             ],
           }),
@@ -189,7 +207,7 @@ export async function convertToDOCX(
 /** Convert image to PPTX using PptxGenJS (dynamically imported) */
 export async function convertToPPTX(
   img: HTMLImageElement,
-  dataUrl: string
+  dataUrl: string,
 ): Promise<Blob> {
   const PptxGenJS = (await import("pptxgenjs")).default;
   const pptx = new PptxGenJS();
@@ -223,7 +241,7 @@ export async function convertToPPTX(
 
   slide.addImage({ data: dataUrl, x, y, w: drawW, h: drawH });
 
-  const blob = await pptx.write({ outputType: "blob" }) as Blob;
+  const blob = (await pptx.write({ outputType: "blob" })) as Blob;
   return blob;
 }
 
@@ -236,8 +254,10 @@ export function mimeToExt(mime: string): string {
     "image/gif": "gif",
     "image/bmp": "bmp",
     "application/pdf": "pdf",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
-    "application/vnd.openxmlformats-officedocument.presentationml.presentation": "pptx",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+      "docx",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+      "pptx",
   };
   return map[mime] ?? "bin";
 }
